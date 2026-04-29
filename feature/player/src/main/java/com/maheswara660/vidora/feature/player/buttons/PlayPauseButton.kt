@@ -1,0 +1,46 @@
+package com.maheswara660.vidora.feature.player.buttons
+
+import androidx.annotation.OptIn
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.ui.compose.state.rememberPlayPauseButtonState
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import com.maheswara660.vidora.core.ui.R as coreUiR
+import com.maheswara660.vidora.core.ui.designsystem.VidoraIcons
+
+@OptIn(UnstableApi::class)
+@Composable
+fun PlayPauseButton(player: Player, modifier: Modifier = Modifier) {
+    val state = rememberPlayPauseButtonState(player)
+    val icon = when (state.showPlay) {
+        true -> VidoraIcons.Play
+        false -> VidoraIcons.Pause
+    }
+    val contentDescription = stringResource(coreUiR.string.play_pause)
+
+    FilledIconButton(
+        onClick = state::onClick,
+        enabled = state.isEnabled,
+        modifier = modifier.size(64.dp),
+        colors = IconButtonDefaults.filledIconButtonColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            modifier = Modifier.size(32.dp),
+        )
+    }
+}
