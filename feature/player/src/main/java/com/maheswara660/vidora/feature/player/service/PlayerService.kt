@@ -585,6 +585,34 @@ class PlayerService : MediaSessionService() {
                     ),
                 )
             }.build()
+
+            serviceScope.launch {
+                preferencesRepository.playerPreferences.collect { prefs ->
+                    player.pauseAtEndOfMediaItems = !prefs.autoplay
+                    player.repeatMode = when (prefs.loopMode) {
+                        LoopMode.OFF -> Player.REPEAT_MODE_OFF
+                        LoopMode.ONE -> Player.REPEAT_MODE_ONE
+                        LoopMode.ALL -> Player.REPEAT_MODE_ALL
+                    }
+
+                    if (prefs.enableVolumeBoost) {
+                        val audioSessionId = player.audioSessionId
+                        if (audioSessionId != C.AUDIO_SESSION_ID_UNSET && loudnessEnhancer == null) {
+                            try {
+                                loudnessEnhancer = LoudnessEnhancer(audioSessionId)
+                                if (currentVolumeGain > 0) {
+                                    setEnhancerTargetGain(currentVolumeGain)
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    } else {
+                        loudnessEnhancer?.release()
+                        loudnessEnhancer = null
+                    }
+                }
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

@@ -79,6 +79,9 @@ import androidx.compose.material.icons.rounded.Title
 import androidx.compose.material.icons.rounded.TouchApp
 import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material.icons.rounded.Tune
+import androidx.compose.material.icons.rounded.Security
+import androidx.compose.material.icons.rounded.SkipNext
+import androidx.compose.material.icons.rounded.SkipPrevious
 import androidx.compose.material.icons.rounded.Update
 
 object VidoraIcons {
@@ -164,4 +167,5 @@ object VidoraIcons {
     val SkipPrevious = Icons.Rounded.SkipPrevious
     val Cancel = Icons.Rounded.Close
     val Palette = Icons.Rounded.Palette
+    val Shield = Icons.Rounded.Security
 }

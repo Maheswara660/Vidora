@@ -63,15 +63,17 @@ fun QuickSettingsDialog(
                 onClick = {
                     updatePreferences(preferences)
                     onDismiss()
-                }
+                },
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = stringResource(R.string.apply))
             }
         },
         dismissButton = {
-            androidx.compose.material3.TextButton(onClick = onDismiss) {
-                Text(text = stringResource(R.string.cancel))
-            }
+            com.maheswara660.vidora.core.ui.components.CancelButton(
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     ) {
         Column(

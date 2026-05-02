@@ -53,13 +53,17 @@ fun IosSwitch(
             .height(31.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(backgroundColor)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                enabled = enabled
-            ) {
-                onCheckedChange?.invoke(!checked)
-            }
+            .then(
+                if (onCheckedChange != null) {
+                    Modifier.clickable(
+                        interactionSource = interactionSource,
+                        indication = null,
+                        enabled = enabled
+                    ) {
+                        onCheckedChange.invoke(!checked)
+                    }
+                } else Modifier
+            )
             .padding(2.dp),
         contentAlignment = Alignment.CenterStart
     ) {

@@ -36,7 +36,7 @@ import com.maheswara660.vidora.core.ui.theme.supportsDynamicTheming
 import com.maheswara660.vidora.settings.extensions.name
 import com.maheswara660.vidora.core.ui.theme.CustomAccents
 import com.maheswara660.vidora.core.ui.components.ClickablePreferenceItem
-import com.maheswara660.vidora.core.ui.components.VidoraBottomSheet
+import com.maheswara660.vidora.settings.composables.OptionsDialog
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -51,9 +51,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.mutableStateOf
@@ -169,33 +167,17 @@ private fun ThemeBottomSheet(
 ) {
     var selectedConfig by remember { mutableStateOf(initialConfig) }
 
-    VidoraBottomSheet(
-        onDismissRequest = onDismiss,
-        title = stringResource(R.string.select_theme),
-        confirmButton = {
-            Button(onClick = { onApply(selectedConfig) }) {
-                Text(stringResource(R.string.apply))
-            }
-        },
-        dismissButton = {
-            androidx.compose.material3.TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
-            }
-        }
+    OptionsDialog(
+        text = stringResource(R.string.select_theme),
+        onDismissClick = onDismiss,
+        onConfirmClick = { onApply(selectedConfig) }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 16.dp)
-        ) {
-            ThemeConfig.entries.forEach { config ->
-                RadioTextButton(
-                    text = config.name(),
-                    selected = selectedConfig == config,
-                    onClick = { selectedConfig = config }
-                )
-            }
+        items(ThemeConfig.entries.toTypedArray()) { config ->
+            RadioTextButton(
+                text = config.name(),
+                selected = selectedConfig == config,
+                onClick = { selectedConfig = config }
+            )
         }
     }
 }
@@ -209,46 +191,34 @@ private fun AccentBottomSheet(
 ) {
     var selectedIndex by remember { mutableIntStateOf(initialAccentIndex) }
 
-    VidoraBottomSheet(
-        onDismissRequest = onDismiss,
-        title = stringResource(R.string.select_accent),
-        confirmButton = {
-            Button(onClick = { onApply(selectedIndex) }) {
-                Text(stringResource(R.string.apply))
-            }
-        },
-        dismissButton = {
-            androidx.compose.material3.TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
-            }
-        }
+    OptionsDialog(
+        text = stringResource(R.string.select_accent),
+        onDismissClick = onDismiss,
+        onConfirmClick = { onApply(selectedIndex) }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 16.dp)
-        ) {
-            if (supportsDynamicTheming()) {
+        if (supportsDynamicTheming()) {
+            item {
                 RadioTextButton(
                     text = stringResource(R.string.material_you),
                     selected = selectedIndex == -1,
                     onClick = { selectedIndex = -1 }
                 )
             }
+        }
+        item {
             RadioTextButton(
                 text = stringResource(R.string.default_teal),
                 selected = selectedIndex == 0,
                 onClick = { selectedIndex = 0 }
             )
-            
-            CustomAccents.forEachIndexed { index, accent ->
-                RadioTextButton(
-                    text = accent.name,
-                    selected = selectedIndex == index + 1,
-                    onClick = { selectedIndex = index + 1 }
-                )
-            }
+        }
+        
+        itemsIndexed(CustomAccents) { index: Int, accent: com.maheswara660.vidora.core.ui.theme.AccentCombination ->
+            RadioTextButton(
+                text = accent.name,
+                selected = selectedIndex == index + 1,
+                onClick = { selectedIndex = index + 1 }
+            )
         }
     }
 }

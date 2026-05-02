@@ -46,6 +46,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.LayoutDirection
@@ -59,7 +60,6 @@ import com.maheswara660.vidora.feature.player.LocalUseMaterialYouControls
 import com.maheswara660.vidora.feature.player.buttons.LoopButton
 import com.maheswara660.vidora.feature.player.buttons.PlayerButton
 import com.maheswara660.vidora.feature.player.buttons.ShuffleButton
-import com.maheswara660.vidora.core.ui.designsystem.VidoraIcons
 import com.maheswara660.vidora.feature.player.extensions.drawableRes
 import com.maheswara660.vidora.feature.player.extensions.noRippleClickable
 import com.maheswara660.vidora.feature.player.state.MediaPresentationState
@@ -132,7 +132,7 @@ fun ControlsBottomView(
                 onClick = onRotateClick,
             ) {
                 Icon(
-                    imageVector = VidoraIcons.Rotation,
+                    painter = painterResource(R.drawable.ic_screen_rotation),
                     contentDescription = null,
                     modifier = Modifier.size(16.dp),
                 )
@@ -153,7 +153,7 @@ fun ControlsBottomView(
         ) {
             PlayerButton(onClick = onLockControlsClick) {
                 Icon(
-                    imageVector = VidoraIcons.Unlock,
+                    painter = painterResource(R.drawable.ic_lock_open),
                     contentDescription = null,
                 )
             }
@@ -169,14 +169,14 @@ fun ControlsBottomView(
             if (isPipSupported) {
                 PlayerButton(onClick = onPictureInPictureClick) {
                     Icon(
-                        imageVector = VidoraIcons.Pip,
+                        painter = painterResource(R.drawable.ic_pip),
                         contentDescription = null,
                     )
                 }
             }
             PlayerButton(onClick = onPlayInBackgroundClick) {
                 Icon(
-                    imageVector = VidoraIcons.Headset,
+                    painter = painterResource(R.drawable.ic_headset),
                     contentDescription = null,
                 )
             }
@@ -227,9 +227,9 @@ private fun MaterialYouSlider(
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val interactionSource = remember { MutableInteractionSource() }
-    val trackHeight = 8.dp
-    val thumbWidth = 4.dp
-    val trackThumbGapWidth = 12.dp
+    val trackHeight = 12.dp
+    val thumbWidth = 6.dp
+    val trackThumbGapWidth = 14.dp
 
     Slider(
         value = value,
@@ -336,33 +336,44 @@ private fun SimpleSlider(
     onValueChange: (Float) -> Unit,
     onValueChangeFinished: () -> Unit
 ) {
+    val trackHeight = 10.dp
+    val thumbSize = 18.dp
+    
     Slider(
         value = value,
         valueRange = valueRange,
         onValueChange = onValueChange,
         onValueChangeFinished = onValueChangeFinished,
-        modifier = modifier.height(20.dp),
+        modifier = modifier.height(32.dp),
         thumb = {
             Box(
-                modifier = Modifier.size(16.dp)
-                    .shadow(4.dp, CircleShape)
-                    .background(Color.White)
+                modifier = Modifier
+                    .size(thumbSize)
+                    .shadow(8.dp, CircleShape)
+                    .background(Color.White, CircleShape)
             )
         },
         track = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(4.dp)
-                    .clip(MaterialTheme.shapes.extraSmall)
-                    .background(Color.White.copy(0.5f))
+                    .height(trackHeight)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(0.2f))
             ) {
                 if (valueRange.endInclusive > 0f) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(value / valueRange.endInclusive)
-                            .height(4.dp)
-                            .background(MaterialTheme.colorScheme.primary)
+                            .height(trackHeight)
+                            .background(
+                                brush = Brush.horizontalGradient(
+                                    colors = listOf(
+                                        MaterialTheme.colorScheme.primary,
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                                    )
+                                )
+                            )
                     )
                 }
             }

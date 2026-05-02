@@ -24,6 +24,7 @@ class GeneralPreferencesViewModel @Inject constructor(
             is GeneralPreferencesUiEvent.ShowDialog -> showDialog(event.value)
             GeneralPreferencesUiEvent.ClearThumbnailCache -> clearThumbnailCache()
             GeneralPreferencesUiEvent.ResetSettings -> resetSettings()
+            GeneralPreferencesUiEvent.RequestAllFilesAccess -> {} // Handled in UI
         }
     }
 
@@ -51,10 +52,12 @@ data class GeneralPreferencesUiState(
 sealed interface GeneralPreferencesDialog {
     data object ClearThumbnailCacheDialog : GeneralPreferencesDialog
     data object ResetSettingsDialog : GeneralPreferencesDialog
+    data object AllFilesAccessInfoDialog : GeneralPreferencesDialog
 }
 
 sealed interface GeneralPreferencesUiEvent {
     data class ShowDialog(val value: GeneralPreferencesDialog?) : GeneralPreferencesUiEvent
     data object ClearThumbnailCache : GeneralPreferencesUiEvent
     data object ResetSettings : GeneralPreferencesUiEvent
+    data object RequestAllFilesAccess : GeneralPreferencesUiEvent
 }

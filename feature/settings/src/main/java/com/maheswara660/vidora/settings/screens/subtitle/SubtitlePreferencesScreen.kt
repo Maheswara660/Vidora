@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -199,19 +200,23 @@ private fun SubtitlePreferencesContent(
                 }
 
                 SubtitlePreferenceDialog.SubtitleEncodingDialog -> {
+                    var tempEncoding by remember { mutableStateOf(uiState.preferences.subtitleTextEncoding) }
                     OptionsDialog(
                         text = stringResource(id = R.string.subtitle_text_encoding),
                         onDismissClick = { onEvent(SubtitlePreferencesUiEvent.ShowDialog(null)) },
+                        onConfirmClick = {
+                            onEvent(SubtitlePreferencesUiEvent.UpdateSubtitleEncoding(tempEncoding))
+                            onEvent(SubtitlePreferencesUiEvent.ShowDialog(null))
+                        }
                     ) {
                         items(charsetResource) {
                             val currentCharset = it.substringAfterLast("(", "").removeSuffix(")")
                             if (currentCharset.isEmpty() || Charset.isSupported(currentCharset)) {
                                 RadioTextButton(
                                     text = it,
-                                    selected = currentCharset == uiState.preferences.subtitleTextEncoding,
+                                    selected = currentCharset == tempEncoding,
                                     onClick = {
-                                        onEvent(SubtitlePreferencesUiEvent.UpdateSubtitleEncoding(currentCharset))
-                                        onEvent(SubtitlePreferencesUiEvent.ShowDialog(null))
+                                        tempEncoding = currentCharset
                                     },
                                 )
                             }

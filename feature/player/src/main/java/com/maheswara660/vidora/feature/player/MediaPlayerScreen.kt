@@ -56,7 +56,6 @@ import com.maheswara660.vidora.core.model.ControlButtonsPosition
 import com.maheswara660.vidora.core.model.PlayerPreferences
 import com.maheswara660.vidora.core.ui.R as coreUiR
 import com.maheswara660.vidora.core.ui.extensions.copy
-import com.maheswara660.vidora.core.ui.designsystem.VidoraIcons
 import com.maheswara660.vidora.feature.player.buttons.VidoraButton
 import com.maheswara660.vidora.feature.player.buttons.PlayPauseButton
 import com.maheswara660.vidora.feature.player.buttons.PlayerButton
@@ -257,7 +256,7 @@ fun MediaPlayerScreen(
                             onClick = { controlsVisibilityState.unlockControls() }
                         ) {
                             Icon(
-                                imageVector = VidoraIcons.Lock,
+                                painter = painterResource(coreUiR.drawable.ic_lock),
                                 contentDescription = stringResource(coreUiR.string.controls_unlock),
                             )
                         }

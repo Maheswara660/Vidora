@@ -309,4 +309,7 @@
     <string name="apply">Apply</string>
     <string name="light_theme">Light</string>
     <string name="dark_theme_config">Dark</string>
+    <string name="fast_delete">Fast Delete</string>
+    <string name="fast_delete_description">Bypass system confirmation dialog by granting All Files Access permission (Recommended)</string>
+    <string name="all_files_access_info">Granting All Files Access allows Vidora to delete files without the system "Allow/Deny" prompt. This is safe and only used for media management.</string>
 </resources>

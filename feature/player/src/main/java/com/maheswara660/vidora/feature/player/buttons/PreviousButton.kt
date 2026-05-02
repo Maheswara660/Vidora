@@ -13,8 +13,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.state.rememberPreviousButtonState
 import com.maheswara660.vidora.core.ui.R as coreUiR
 import com.maheswara660.vidora.feature.player.LocalControlsVisibilityState
-import com.maheswara660.vidora.core.ui.designsystem.VidoraIcons
-
 @OptIn(UnstableApi::class)
 @Composable
 internal fun PreviousButton(player: Player, modifier: Modifier = Modifier) {
@@ -30,7 +28,7 @@ internal fun PreviousButton(player: Player, modifier: Modifier = Modifier) {
         },
     ) {
         Icon(
-            imageVector = VidoraIcons.SkipPrevious,
+            painter = painterResource(coreUiR.drawable.ic_skip_prev),
             contentDescription = stringResource(coreUiR.string.player_controls_previous),
             modifier = Modifier.size(32.dp),
         )

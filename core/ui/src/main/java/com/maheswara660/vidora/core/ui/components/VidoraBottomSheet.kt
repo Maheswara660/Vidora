@@ -24,6 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.ui.text.style.TextAlign
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +43,7 @@ fun VidoraBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        modifier = modifier,
+        modifier = modifier.imePadding(),
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         contentWindowInsets = { WindowInsets.navigationBars }
     ) {
@@ -49,11 +53,22 @@ fun VidoraBottomSheet(
                 .padding(bottom = 24.dp)
         ) {
             if (title != null) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
+                        textAlign = TextAlign.Center
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        thickness = 0.5.dp,
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                    )
+                }
             }
             content()
 
@@ -63,16 +78,15 @@ fun VidoraBottomSheet(
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp, vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    if (dismissButton != null) {
-                        dismissButton()
-                    }
-                    if (confirmButton != null && dismissButton != null) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
-                    if (confirmButton != null) {
-                        confirmButton()
+                    if (dismissButton != null && confirmButton != null) {
+                        Box(modifier = Modifier.weight(1f)) { dismissButton() }
+                        Box(modifier = Modifier.weight(1f)) { confirmButton() }
+                    } else if (dismissButton != null) {
+                        Box(modifier = Modifier.fillMaxWidth()) { dismissButton() }
+                    } else if (confirmButton != null) {
+                        Box(modifier = Modifier.fillMaxWidth()) { confirmButton() }
                     }
                 }
             }

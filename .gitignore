@@ -1,20 +1,27 @@
+# Gradle
+.gradle/
+build/
+/*/build/
+build-cache/
+.externalNativeBuild/
+.cxx/
+
 # IDE & Tooling
 *.iml
-.gradle/
 .idea/
 .kotlin/
 .vscode/
-
-# Build & Captures
-/build/
-/*/build/
-/captures/
-.externalNativeBuild/
-.cxx/
+.navigation/
+captures/
+.settings/
+.project
+.classpath
 
 # OS Specific
 .DS_Store
 Thumbs.db
+*.swp
+*~
 
 # Signing & Secrets
 *.jks
@@ -22,13 +29,18 @@ Thumbs.db
 *.p12
 google-services.json
 local.properties
+secrets.properties
 
-# Logs
+# Logs & Temp
 /logs/
 *.log
+*.tmp
+*.temp
 
 # Android Artifacts
 *.apk
 *.apks
 *.aab
 output-metadata.json
+lint-results.xml
+lint-results.html

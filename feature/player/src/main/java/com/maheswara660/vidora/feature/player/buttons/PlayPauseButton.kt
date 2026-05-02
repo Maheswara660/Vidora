@@ -16,15 +16,13 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import com.maheswara660.vidora.core.ui.R as coreUiR
-import com.maheswara660.vidora.core.ui.designsystem.VidoraIcons
-
 @OptIn(UnstableApi::class)
 @Composable
 fun PlayPauseButton(player: Player, modifier: Modifier = Modifier) {
     val state = rememberPlayPauseButtonState(player)
     val icon = when (state.showPlay) {
-        true -> VidoraIcons.Play
-        false -> VidoraIcons.Pause
+        true -> painterResource(coreUiR.drawable.ic_play)
+        false -> painterResource(coreUiR.drawable.ic_pause)
     }
     val contentDescription = stringResource(coreUiR.string.play_pause)
 
@@ -38,7 +36,7 @@ fun PlayPauseButton(player: Player, modifier: Modifier = Modifier) {
         )
     ) {
         Icon(
-            imageVector = icon,
+            painter = icon,
             contentDescription = contentDescription,
             modifier = Modifier.size(32.dp),
         )

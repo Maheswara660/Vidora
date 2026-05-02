@@ -41,6 +41,7 @@ Vidora is built on a foundation of the latest industry-standard technologies to 
 
 ### 🎬 Advanced Playback
 *   **Gestures Control**: Intuitive swipe gestures for volume, brightness, and seeking.
+*   **Volume Boost**: Amplify audio volume up to 200% for a true cinematic experience.
 *   **Multi-Track Support**: Seamless switching between multiple audio tracks and subtitles.
 *   **Subtitle Synchronization**: Real-time adjustment of subtitle delay and speed.
 *   **Playback Speed**: Variable speed control from 0.25x to 4.0x.
@@ -53,6 +54,7 @@ Vidora is built on a foundation of the latest industry-standard technologies to 
 
 ### 🎨 Premium Aesthetics
 *   **Dynamic Accents**: Choose from a curated list of professional color themes.
+*   **Pill-Shaped UI**: Modernized buttons and controls using premium pill-shaped designs.
 *   **Glassmorphic UI**: Modern, translucent design elements that feel light and airy.
 *   **Smooth Transitions**: Fluid animations when navigating between screens.
 
@@ -99,6 +101,7 @@ Vidora is built on a foundation of the latest industry-standard technologies to 
 ### Permissions Explained
 To provide a complete experience, Vidora requires:
 * **Media Access**: To scan and play video files from your device.
+* **All Files Access (Optional)**: Granting this allows for **Fast Delete**, bypassing the system "Allow/Deny" confirmation for a seamless workflow.
 * **Notifications**: For media session controls and playback status.
 
 ### How to Install

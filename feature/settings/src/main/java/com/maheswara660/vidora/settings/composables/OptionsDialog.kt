@@ -11,25 +11,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.padding
 import com.maheswara660.vidora.core.ui.components.VidoraBottomSheet
 import androidx.compose.material3.ExperimentalMaterial3Api
+import com.maheswara660.vidora.core.ui.components.CancelButton
+import com.maheswara660.vidora.core.ui.components.DoneButton
+import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.res.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OptionsDialog(
     text: String,
     onDismissClick: () -> Unit,
+    onConfirmClick: (() -> Unit)? = null,
     options: LazyListScope.() -> Unit,
 ) {
     VidoraBottomSheet(
-        onDismissRequest = onDismissClick,
+        onDismissRequest = onConfirmClick ?: onDismissClick,
         title = text,
-        dismissButton = {
-            androidx.compose.material3.TextButton(onClick = onDismissClick) {
-                Text(com.maheswara660.vidora.core.ui.R.string.cancel.let { androidx.compose.ui.res.stringResource(it) })
+        confirmButton = onConfirmClick?.let {
+            {
+                Button(
+                    onClick = it,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = stringResource(com.maheswara660.vidora.core.ui.R.string.apply))
+                }
             }
+        },
+        dismissButton = {
+            CancelButton(
+                onClick = onDismissClick,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     ) {
         LazyColumn(
-            modifier = Modifier.selectableGroup(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .selectableGroup(),
             content = options,
         )
     }

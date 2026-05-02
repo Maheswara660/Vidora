@@ -47,13 +47,17 @@
 
 # Coil
 -keep class coil.** { *; }
+-keep class coil3.** { *; }
 -dontwarn coil.**
+-dontwarn coil3.**
 
 # Vidora / NextLib (MediaInfo, etc.)
 -keep class io.github.anilbeesetti.nextlib.** { *; }
 -dontwarn io.github.anilbeesetti.nextlib.**
 -keep class com.maheswara660.vidora.core.model.** { *; }
 -keep class com.maheswara660.vidora.core.media.** { *; }
+-keep class com.maheswara660.vidora.core.ui.components.** { *; }
+-keep class com.maheswara660.vidora.settings.composables.** { *; }
 
 # Accompanist
 -keep class com.google.accompanist.** { *; }
@@ -72,3 +76,71 @@
 # Preserve line numbers for stack traces
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
+
+# Navigation & Serialization
+-keep @kotlinx.serialization.Serializable class * { *; }
+-keepclassmembers class * {
+    @kotlinx.serialization.Serializable *;
+}
+-keep class **$$serializer { *; }
+-keepclassmembers class * {
+    *** Companion;
+}
+
+# Hilt ViewModels & Activity
+-keep class * extends androidx.activity.ComponentActivity { *; }
+-keep class * extends androidx.lifecycle.ViewModel { *; }
+-keep class com.maheswara660.vidora.MainViewModel { *; }
+-keep class com.maheswara660.vidora.MainActivityUiState* { *; }
+
+# Ensure NavHost routes aren't stripped
+-keep class * implements androidx.navigation.NavArgs
+-keep class * extends androidx.navigation.NavRoute
+
+# Kotlin Coroutines
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
+-keepclassmembernames class kotlinx.coroutines.android.HandlerContext {
+    private long _h;
+}
+
+# DataStore
+-keep class androidx.datastore.** { *; }
+
+# AboutLibraries
+-keep class com.mikepenz.aboutlibraries.** { *; }
+
+# Reorderable
+-keep class sh.calvin.reorderable.** { *; }
+
+# OkHttp (indirectly used by Coil)
+-keepattributes Signature, RuntimeVisibleAnnotations, AnnotationDefault
+-keep class okhttp3.** { *; }
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
+
+# Compose & Material 3
+-keep class androidx.compose.ui.platform.** { *; }
+-keep class androidx.compose.runtime.** { *; }
+-keep class androidx.compose.material3.** { *; }
+
+# Hilt Generated Code
+-keep class **_HiltModules* { *; }
+-keep class **_HiltComponents* { *; }
+-keep class **_Factory { *; }
+-keep class **_MembersInjector { *; }
+-keep class **_ViewModelModule { *; }
+
+# Feature Screens (Navigation safety)
+-keep class com.maheswara660.vidora.feature.**.screens.** { *; }
+-keep class com.maheswara660.vidora.feature.**.ui.** { *; }
+-keep class com.maheswara660.vidora.settings.screens.** { *; }
+# Feature Screens & Services (Navigation & Component safety)
+-keep class com.maheswara660.vidora.MainActivity { *; }
+-keep class com.maheswara660.vidora.feature.**.service.** { *; }
+-keep class com.maheswara660.vidora.feature.player.PlayerActivity { *; }
+
+# Activity Result API
+-keep class androidx.activity.result.** { *; }

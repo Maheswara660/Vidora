@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
@@ -51,6 +52,15 @@ class LocalMediaService @Inject constructor(
     }
 
     override suspend fun deleteMedia(uris: List<Uri>): Boolean = withContext(Dispatchers.IO) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
+            return@withContext uris.all { uri ->
+                try {
+                    contentResolver.delete(uri, null, null) > 0
+                } catch (e: Exception) {
+                    false
+                }
+            }
+        }
         return@withContext if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             deleteMediaR(uris)
         } else {
@@ -59,6 +69,20 @@ class LocalMediaService @Inject constructor(
     }
 
     override suspend fun renameMedia(uri: Uri, to: String): Boolean = withContext(Dispatchers.IO) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
+            return@withContext try {
+                contentResolver.update(
+                    uri,
+                    ContentValues().apply {
+                        put(MediaStore.MediaColumns.DISPLAY_NAME, to)
+                    },
+                    null,
+                    null
+                ) > 0
+            } catch (e: Exception) {
+                false
+            }
+        }
         return@withContext if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             renameMediaR(uri, to)
         } else {

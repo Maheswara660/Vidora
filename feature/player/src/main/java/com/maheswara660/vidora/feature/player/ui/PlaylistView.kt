@@ -52,7 +52,7 @@ import coil3.request.crossfade
 import com.maheswara660.vidora.core.common.Utils
 import com.maheswara660.vidora.core.ui.R
 import com.maheswara660.vidora.core.ui.components.VidoraSegmentedListItem
-import com.maheswara660.vidora.core.ui.designsystem.VidoraIcons
+import com.maheswara660.vidora.core.ui.components.VidoraSegmentedListItem
 import com.maheswara660.vidora.feature.player.state.rememberPlaylistState
 import sh.calvin.reorderable.DragGestureDetector
 import sh.calvin.reorderable.ReorderableCollectionItemScope
@@ -222,7 +222,7 @@ private fun ThumbnailView(
     ) {
         // Fallback icon
         Icon(
-            imageVector = VidoraIcons.Video,
+            painter = painterResource(R.drawable.ic_play),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.surfaceColorAtElevation(100.dp),
             modifier = Modifier
@@ -271,7 +271,7 @@ private fun EmptyPlaylistView() {
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Icon(
-            imageVector = VidoraIcons.Video,
+            painter = painterResource(R.drawable.ic_play),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
             modifier = Modifier.fillMaxSize(0.3f),

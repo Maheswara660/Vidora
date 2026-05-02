@@ -46,6 +46,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleFloatingActionButton
 import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -84,9 +90,7 @@ import com.maheswara660.vidora.core.model.MediaViewMode
 import com.maheswara660.vidora.core.model.Video
 import com.maheswara660.vidora.core.ui.R
 import com.maheswara660.vidora.core.ui.base.DataState
-import com.maheswara660.vidora.core.ui.components.CancelButton
-import com.maheswara660.vidora.core.ui.components.DoneButton
-import com.maheswara660.vidora.core.ui.components.VidoraDialog
+import com.maheswara660.vidora.feature.videopicker.composables.VideoInfoBottomSheet
 import com.maheswara660.vidora.core.ui.components.VidoraTopAppBar
 import com.maheswara660.vidora.core.ui.composables.PermissionMissingView
 import com.maheswara660.vidora.core.ui.designsystem.VidoraIcons
@@ -99,11 +103,12 @@ import com.maheswara660.vidora.feature.videopicker.composables.CenterCircularPro
 import com.maheswara660.vidora.feature.videopicker.composables.MediaView
 import com.maheswara660.vidora.feature.videopicker.composables.NoVideosFound
 import com.maheswara660.vidora.feature.videopicker.composables.QuickSettingsDialog
-import com.maheswara660.vidora.feature.videopicker.composables.RenameDialog
+import com.maheswara660.vidora.feature.videopicker.composables.RenameBottomSheet
 import com.maheswara660.vidora.feature.videopicker.composables.TextIconToggleButton
-import com.maheswara660.vidora.feature.videopicker.composables.VideoInfoDialog
 import com.maheswara660.vidora.feature.videopicker.state.SelectedFolder
 import com.maheswara660.vidora.feature.videopicker.state.SelectedVideo
+import com.maheswara660.vidora.core.ui.components.VidoraBottomSheet
+import com.maheswara660.vidora.core.ui.components.CancelButton
 import com.maheswara660.vidora.feature.videopicker.state.rememberSelectionManager
 
 @Composable
@@ -332,12 +337,7 @@ internal fun MediaPickerScreen(
                     onEvent(MediaPickerUiEvent.ShareVideos(selectionManager.allSelectedVideos.map { it.uriString }))
                 },
                 onDeleteAction = {
-                    if (MediaService.willSystemAsksForDeleteConfirmation()) {
-                        onEvent(MediaPickerUiEvent.DeleteVideos(selectionManager.allSelectedVideos.map { it.uriString }))
-                        selectionManager.clearSelection()
-                    } else {
-                        showDeleteVideosConfirmation = true
-                    }
+                    showDeleteVideosConfirmation = true
                 },
             )
         },
@@ -426,7 +426,7 @@ internal fun MediaPickerScreen(
 
 
     showRenameActionFor?.let { video ->
-        RenameDialog(
+        RenameBottomSheet(
             name = video.displayName,
             onDismiss = { showRenameActionFor = null },
             onDone = {
@@ -438,14 +438,14 @@ internal fun MediaPickerScreen(
     }
 
     showInfoActionFor?.let { video ->
-        VideoInfoDialog(
+        VideoInfoBottomSheet(
             video = video,
             onDismiss = { showInfoActionFor = null },
         )
     }
 
     if (showDeleteVideosConfirmation) {
-        DeleteConfirmationDialog(
+        DeleteConfirmationBottomSheet(
             selectedVideos = selectionManager.selectedVideos,
             selectedFolders = selectionManager.selectedFolders,
             onConfirm = {
@@ -453,60 +453,74 @@ internal fun MediaPickerScreen(
                 selectionManager.clearSelection()
                 showDeleteVideosConfirmation = false
             },
-            onCancel = { showDeleteVideosConfirmation = false },
+            onDismiss = { showDeleteVideosConfirmation = false },
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DeleteConfirmationDialog(
-    modifier: Modifier = Modifier,
+private fun DeleteConfirmationBottomSheet(
     selectedVideos: Set<SelectedVideo>,
     selectedFolders: Set<SelectedFolder>,
     onConfirm: () -> Unit,
-    onCancel: () -> Unit,
+    onDismiss: () -> Unit,
 ) {
-    VidoraDialog(
-        onDismissRequest = onCancel,
-        title = {
-            Text(
-                text = when {
-                    selectedVideos.isEmpty() -> when (selectedFolders.size) {
-                        1 -> stringResource(R.string.delete_one_folder)
-                        else -> stringResource(R.string.delete_folders, selectedFolders.size)
-                    }
+    val sheetState = rememberModalBottomSheetState()
+    val titleText = when {
+        selectedVideos.isEmpty() -> when (selectedFolders.size) {
+            1 -> stringResource(R.string.delete_one_folder)
+            else -> stringResource(R.string.delete_folders, selectedFolders.size)
+        }
+        selectedFolders.isEmpty() -> when (selectedVideos.size) {
+            1 -> stringResource(R.string.delete_one_video)
+            else -> stringResource(R.string.delete_videos, selectedVideos.size)
+        }
+        else -> stringResource(R.string.delete_items, selectedFolders.size + selectedVideos.size)
+    }
 
-                    selectedFolders.isEmpty() -> when (selectedVideos.size) {
-                        1 -> stringResource(R.string.delete_one_video)
-                        else -> stringResource(R.string.delete_videos, selectedVideos.size)
-                    }
-
-                    else -> stringResource(R.string.delete_items, selectedFolders.size + selectedVideos.size)
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
-        },
+    VidoraBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        title = titleText,
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = onConfirm,
-                modifier = modifier,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                )
             ) {
                 Text(text = stringResource(R.string.delete))
             }
         },
-        dismissButton = { CancelButton(onClick = onCancel) },
-        modifier = modifier,
-        content = {
+        dismissButton = {
+            com.maheswara660.vidora.core.ui.components.CancelButton(
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
             Text(
                 text = if ((selectedFolders.size + selectedVideos.size) == 1) {
                     stringResource(R.string.delete_item_info)
                 } else {
                     stringResource(R.string.delete_items_info)
                 },
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-        },
-    )
+        }
+    }
 }
 
 

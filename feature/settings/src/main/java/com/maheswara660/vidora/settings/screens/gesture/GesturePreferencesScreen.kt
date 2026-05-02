@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -34,7 +35,9 @@ import com.maheswara660.vidora.core.model.DoubleTapGesture
 import com.maheswara660.vidora.core.model.PlayerPreferences
 import com.maheswara660.vidora.core.ui.R
 import com.maheswara660.vidora.core.ui.components.ListSectionTitle
-import com.maheswara660.vidora.core.ui.components.VidoraDialogWithDoneAndCancelButtons
+import com.maheswara660.vidora.core.ui.components.VidoraBottomSheet
+import com.maheswara660.vidora.core.ui.components.CancelButton
+import androidx.compose.material3.Button
 import com.maheswara660.vidora.core.ui.components.VidoraTopAppBar
 import com.maheswara660.vidora.core.ui.components.PreferenceSlider
 import com.maheswara660.vidora.core.ui.components.PreferenceSwitch
@@ -253,29 +256,46 @@ private fun GesturePreferencesContent(
                         mutableFloatStateOf(uiState.preferences.longPressControlsSpeed)
                     }
 
-                    VidoraDialogWithDoneAndCancelButtons(
+                    VidoraBottomSheet(
                         title = stringResource(R.string.long_press_gesture),
-                        onDoneClick = {
-                            onEvent(GesturePreferencesUiEvent.UpdateLongPressControlsSpeed(longPressControlsSpeed))
-                            onEvent(GesturePreferencesUiEvent.ShowDialog(null))
+                        onDismissRequest = { onEvent(GesturePreferencesUiEvent.ShowDialog(null)) },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    onEvent(GesturePreferencesUiEvent.UpdateLongPressControlsSpeed(longPressControlsSpeed))
+                                    onEvent(GesturePreferencesUiEvent.ShowDialog(null))
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(text = stringResource(R.string.apply))
+                            }
                         },
-                        onDismissClick = { onEvent(GesturePreferencesUiEvent.ShowDialog(null)) },
-                        content = {
+                        dismissButton = {
+                            CancelButton(
+                                onClick = { onEvent(GesturePreferencesUiEvent.ShowDialog(null)) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        },
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp, vertical = 16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
                             Text(
                                 text = "$longPressControlsSpeed",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 20.dp),
                                 textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.titleMedium,
+                                style = MaterialTheme.typography.headlineMedium,
+                                modifier = Modifier.padding(bottom = 16.dp)
                             )
                             Slider(
                                 value = longPressControlsSpeed,
                                 onValueChange = { longPressControlsSpeed = it.round(1) },
                                 valueRange = 0.2f..4.0f,
                             )
-                        },
-                    )
+                        }
+                    }
                 }
             }
         }

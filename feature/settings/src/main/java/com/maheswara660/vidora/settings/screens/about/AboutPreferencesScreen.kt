@@ -352,7 +352,7 @@ private fun Context.appVersion(): String {
         packageInfo.versionCode
     }
 
-    return packageInfo.versionName?.substringBefore(" ") ?: "1.0.0"
+    return packageInfo.versionName?.substringBefore(" ") ?: "1.1.0"
 }
 
 internal fun UriHandler.openUriOrShowToast(uri: String, context: Context) {

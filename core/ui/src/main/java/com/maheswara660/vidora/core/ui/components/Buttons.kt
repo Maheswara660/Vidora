@@ -1,10 +1,12 @@
 package com.maheswara660.vidora.core.ui.components
 
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.foundation.shape.CircleShape
 import com.maheswara660.vidora.core.ui.R
 
 @Composable
@@ -13,10 +15,11 @@ fun DoneButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    TextButton(
+    Button(
         enabled = enabled,
         onClick = onClick,
         modifier = modifier,
+        shape = CircleShape,
     ) {
         Text(text = stringResource(R.string.done))
     }
@@ -28,10 +31,11 @@ fun CancelButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    TextButton(
+    OutlinedButton(
         enabled = enabled,
         onClick = onClick,
         modifier = modifier,
+        shape = CircleShape,
     ) {
         Text(text = stringResource(R.string.cancel))
     }

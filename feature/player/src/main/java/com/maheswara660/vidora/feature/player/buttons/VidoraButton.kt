@@ -13,8 +13,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.state.rememberNextButtonState
 import com.maheswara660.vidora.core.ui.R as coreUiR
 import com.maheswara660.vidora.feature.player.LocalControlsVisibilityState
-import com.maheswara660.vidora.core.ui.designsystem.VidoraIcons
-
 @OptIn(UnstableApi::class)
 @Composable
 internal fun VidoraButton(player: Player, modifier: Modifier = Modifier) {
@@ -30,7 +28,7 @@ internal fun VidoraButton(player: Player, modifier: Modifier = Modifier) {
         },
     ) {
         Icon(
-            imageVector = VidoraIcons.SkipNext,
+            painter = painterResource(coreUiR.drawable.ic_skip_next),
             contentDescription = stringResource(coreUiR.string.player_controls_next),
             modifier = Modifier.size(32.dp),
         )

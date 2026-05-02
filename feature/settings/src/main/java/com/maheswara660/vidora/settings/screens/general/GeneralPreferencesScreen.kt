@@ -27,7 +27,8 @@ import com.maheswara660.vidora.core.ui.R
 import com.maheswara660.vidora.core.ui.components.CancelButton
 import com.maheswara660.vidora.core.ui.components.ClickablePreferenceItem
 import com.maheswara660.vidora.core.ui.components.ListSectionTitle
-import com.maheswara660.vidora.core.ui.components.VidoraDialog
+import com.maheswara660.vidora.core.ui.components.VidoraBottomSheet
+import androidx.compose.material3.Button
 import com.maheswara660.vidora.core.ui.components.VidoraTopAppBar
 import com.maheswara660.vidora.core.ui.designsystem.VidoraIcons
 
@@ -87,6 +88,14 @@ private fun GeneralPreferencesContent(
                     onClick = { onEvent(GeneralPreferencesUiEvent.ShowDialog(GeneralPreferencesDialog.ClearThumbnailCacheDialog)) },
                     isFirstItem = true
                 )
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                    ClickablePreferenceItem(
+                        title = stringResource(R.string.fast_delete),
+                        description = stringResource(R.string.fast_delete_description),
+                        icon = VidoraIcons.Shield,
+                        onClick = { onEvent(GeneralPreferencesUiEvent.ShowDialog(GeneralPreferencesDialog.AllFilesAccessInfoDialog)) }
+                    )
+                }
                 ClickablePreferenceItem(
                     title = stringResource(R.string.reset_settings),
                     description = stringResource(R.string.reset_settings_description),
@@ -98,62 +107,104 @@ private fun GeneralPreferencesContent(
         }
 
         uiState.showDialog?.let { dialog ->
+            val context = androidx.compose.ui.platform.LocalContext.current
             when (dialog) {
-                GeneralPreferencesDialog.ClearThumbnailCacheDialog -> {
-                    VidoraDialog(
+                GeneralPreferencesDialog.AllFilesAccessInfoDialog -> {
+                    VidoraBottomSheet(
                         onDismissRequest = { onEvent(GeneralPreferencesUiEvent.ShowDialog(null)) },
-                        title = {
-                            Text(
-                                text = stringResource(R.string.delete_thumbnail_cache),
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                        },
+                        title = stringResource(R.string.fast_delete),
                         confirmButton = {
-                            TextButton(
+                            Button(
+                                onClick = {
+                                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                                        val intent = android.content.Intent(android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
+                                            data = android.net.Uri.parse("package:${context.packageName}")
+                                        }
+                                        try {
+                                            context.startActivity(intent)
+                                        } catch (e: Exception) {
+                                            val fallbackIntent = android.content.Intent(android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                                            context.startActivity(fallbackIntent)
+                                        }
+                                    }
+                                    onEvent(GeneralPreferencesUiEvent.ShowDialog(null))
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(text = stringResource(R.string.open_settings))
+                            }
+                        },
+                        dismissButton = {
+                            com.maheswara660.vidora.core.ui.components.CancelButton(
+                                onClick = { onEvent(GeneralPreferencesUiEvent.ShowDialog(null)) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.all_files_access_info),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
+                        )
+                    }
+                }
+                GeneralPreferencesDialog.ClearThumbnailCacheDialog -> {
+                    VidoraBottomSheet(
+                        onDismissRequest = { onEvent(GeneralPreferencesUiEvent.ShowDialog(null)) },
+                        title = stringResource(R.string.delete_thumbnail_cache),
+                        confirmButton = {
+                            Button(
                                 onClick = {
                                     onEvent(GeneralPreferencesUiEvent.ClearThumbnailCache)
                                     onEvent(GeneralPreferencesUiEvent.ShowDialog(null))
                                 },
+                                modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(text = stringResource(R.string.delete))
                             }
                         },
-                        dismissButton = { CancelButton(onClick = { onEvent(GeneralPreferencesUiEvent.ShowDialog(null)) }) },
-                        content = {
-                            Text(
-                                text = stringResource(R.string.delete_thumbnail_cache_confirmation),
-                                style = MaterialTheme.typography.titleSmall,
-                            )
+                        dismissButton = { 
+                            CancelButton(
+                                onClick = { onEvent(GeneralPreferencesUiEvent.ShowDialog(null)) },
+                                modifier = Modifier.fillMaxWidth()
+                            ) 
                         },
-                    )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.delete_thumbnail_cache_confirmation),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
+                        )
+                    }
                 }
                 GeneralPreferencesDialog.ResetSettingsDialog -> {
-                    VidoraDialog(
+                    VidoraBottomSheet(
                         onDismissRequest = { onEvent(GeneralPreferencesUiEvent.ShowDialog(null)) },
-                        title = {
-                            Text(
-                                text = stringResource(R.string.reset_settings),
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                        },
+                        title = stringResource(R.string.reset_settings),
                         confirmButton = {
-                            TextButton(
+                            Button(
                                 onClick = {
                                     onEvent(GeneralPreferencesUiEvent.ResetSettings)
                                     onEvent(GeneralPreferencesUiEvent.ShowDialog(null))
                                 },
+                                modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(text = stringResource(R.string.reset))
                             }
                         },
-                        dismissButton = { CancelButton(onClick = { onEvent(GeneralPreferencesUiEvent.ShowDialog(null)) }) },
-                        content = {
-                            Text(
-                                text = stringResource(R.string.reset_settings_confirmation),
-                                style = MaterialTheme.typography.titleSmall,
-                            )
+                        dismissButton = { 
+                            CancelButton(
+                                onClick = { onEvent(GeneralPreferencesUiEvent.ShowDialog(null)) },
+                                modifier = Modifier.fillMaxWidth()
+                            ) 
                         },
-                    )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.reset_settings_confirmation),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
+                        )
+                    }
                 }
             }
         }
